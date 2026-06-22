@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoAtlant — Умный костюм с подогревом</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+<base target="_blank">
+</head>
+<body>
+    <div class="aurora-bg"></div>
+    <div id="snowflakes"></div>
+
+    <div class="main-container">
+        <div class="header">
+            <h1>TechnoAtlant</h1>
+            <div class="subtitle">Интерактивная симуляция умного костюма с подогревом</div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Левая панель — Режимы и сценарии -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span class="icon">⚡</span>
+                    Режимы работы
+                </div>
+                <div class="mode-buttons">
+                    <button class="mode-btn" data-mode="eco" onclick="setMode('eco')">
+                        <span class="mode-icon">🌿</span>
+                        <div class="mode-info">
+                            <span class="mode-name">Экономичный</span>
+                            <span class="mode-desc">Низкое потребление, до 6 часов</span>
+                        </div>
+                    </button>
+                    <button class="mode-btn active" data-mode="standard" onclick="setMode('standard')">
+                        <span class="mode-icon">🔥</span>
+                        <div class="mode-info">
+                            <span class="mode-name">Стандартный</span>
+                            <span class="mode-desc">Оптимальный баланс, до 4 часов</span>
+                        </div>
+                    </button>
+                    <button class="mode-btn" data-mode="intense" onclick="setMode('intense')">
+                        <span class="mode-icon">🔥🔥</span>
+                        <div class="mode-info">
+                            <span class="mode-name">Интенсивный</span>
+                            <span class="mode-desc">Максимальный обогрев, до 2 часов</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="panel-title" style="margin-top: 25px;">
+                    <span class="icon">🎭</span>
+                    Сценарии
+                </div>
+                <div class="scenario-buttons">
+                    <button class="scenario-btn" id="scenario-activity" onclick="toggleActivity()">
+                        <span>🏃</span>
+                        <span>Активная работа пользователя</span>
+                    </button>
+                    <button class="scenario-btn" id="scenario-lowbat" onclick="triggerLowBattery()">
+                        <span>🔋</span>
+                        <span>Симуляция низкого заряда</span>
+                    </button>
+                    <button class="scenario-btn" id="scenario-overheat" onclick="triggerOverheat()">
+                        <span>🌡️</span>
+                        <span>Симуляция перегрева</span>
+                    </button>
+                </div>
+
+                <div class="throttling-indicator" id="throttling-indicator">
+                    <span>⚠️</span>
+                    <span>ТРОТТЛИНГ АКТИВЕН: Мощность снижена для защиты!</span>
+                </div>
+            </div>
+
+            <!-- Центральная панель — Костюм -->
+            <div class="panel">
+                <div class="panel-title" style="justify-content: center;">
+                    <span class="icon">👤</span>
+                    Схема обогрева костюма
+                </div>
+                <div class="suit-container">
+                    <svg class="suit-svg" viewBox="0 0 300 500" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="suitGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1a3a5c;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0d1f33;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="heatGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:0.9" />
+                                <stop offset="50%" style="stop-color:#ff8c5a;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff6b35;stop-opacity:0.9" />
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            <filter id="strongGlow">
+                                <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- Основной контур костюма -->
+                        <path d="M110 30 Q130 25,150 28 Q170 25,190 30 L200 45 Q210 55,215 70 L220 100 L225 130 L215 160 L210 200 L205 250 L200 300 L195 350 L190 400 L185 450 L180 480 Q175 490,165 495 L155 498 L145 498 L135 495 Q125 490,120 480 L115 450 L110 400 L105 350 L100 300 L95 250 L90 200 L85 160 L75 130 L80 100 L85 70 Q90 55,100 45 Z" 
+                              fill="url(#suitGradient)" stroke="rgba(0,200,255,0.3)" stroke-width="2"/>
+
+                        <!-- Плечи -->
+                        <ellipse cx="95" cy="55" rx="25" ry="20" fill="url(#suitGradient)" stroke="rgba(0,200,255,0.2)" stroke-width="1"/>
+                        <ellipse cx="205" cy="55" rx="25" ry="20" fill="url(#suitGradient)" stroke="rgba(0,200,255,0.2)" stroke-width="1"/>
+
+                        <!-- Руки -->
+                        <path d="M80 70 L65 120 L55 180 L50 240 L48 300 L52 350" 
+                              fill="none" stroke="rgba(0,200,255,0.15)" stroke-width="20" stroke-linecap="round"/>
+                        <path d="M220 70 L235 120 L245 180 L250 240 L252 300 L248 350" 
+                              fill="none" stroke="rgba(0,200,255,0.15)" stroke-width="20" stroke-linecap="round"/>
+
+                        <!-- Ноги -->
+                        <path d="M125 350 L120 420 L115 480" 
+                              fill="none" stroke="rgba(0,200,255,0.15)" stroke-width="30" stroke-linecap="round"/>
+                        <path d="M175 350 L180 420 L185 480" 
+                              fill="none" stroke="rgba(0,200,255,0.15)" stroke-width="30" stroke-linecap="round"/>
+
+                        <!-- ЗОНЫ ОБОГРЕВА -->
+                        <path id="zone-chest" class="heat-zone" 
+                              d="M115 80 L185 80 L190 140 L185 180 L150 190 L115 180 L110 140 Z" 
+                              fill="url(#heatGradient)" opacity="0.6" filter="url(#glow)"/>
+                        <path id="zone-back" class="heat-zone"
+                              d="M120 85 L180 85 L185 160 L150 170 L115 160 Z"
+                              fill="url(#heatGradient)" opacity="0.5" filter="url(#glow)"/>
+                        <path id="zone-stomach" class="heat-zone"
+                              d="M112 185 L188 185 L185 230 L150 240 L115 230 Z"
+                              fill="url(#heatGradient)" opacity="0.5" filter="url(#glow)"/>
+                        <path id="zone-waist" class="heat-zone"
+                              d="M115 235 L185 235 L182 280 L150 290 L118 280 Z"
+                              fill="url(#heatGradient)" opacity="0.5" filter="url(#glow)"/>
+                        <ellipse id="zone-l-shoulder" class="heat-zone" cx="95" cy="55" rx="18" ry="14" 
+                                 fill="url(#heatGradient)" opacity="0.4" filter="url(#glow)"/>
+                        <ellipse id="zone-r-shoulder" class="heat-zone" cx="205" cy="55" rx="18" ry="14" 
+                                 fill="url(#heatGradient)" opacity="0.4" filter="url(#glow)"/>
+                        <path id="zone-l-arm" class="heat-zone"
+                              d="M65 120 L58 180 L75 185 L82 125 Z"
+                              fill="url(#heatGradient)" opacity="0.3" filter="url(#glow)"/>
+                        <path id="zone-r-arm" class="heat-zone"
+                              d="M235 120 L242 180 L225 185 L218 125 Z"
+                              fill="url(#heatGradient)" opacity="0.3" filter="url(#glow)"/>
+                        <path id="zone-l-thigh" class="heat-zone"
+                              d="M122 300 L148 300 L145 380 L125 380 Z"
+                              fill="url(#heatGradient)" opacity="0.4" filter="url(#glow)"/>
+                        <path id="zone-r-thigh" class="heat-zone"
+                              d="M152 300 L178 300 L175 380 L155 380 Z"
+                              fill="url(#heatGradient)" opacity="0.4" filter="url(#glow)"/>
+                        <path id="zone-l-calf" class="heat-zone"
+                              d="M125 385 L143 385 L140 465 L128 465 Z"
+                              fill="url(#heatGradient)" opacity="0.3" filter="url(#glow)"/>
+                        <path id="zone-r-calf" class="heat-zone"
+                              d="M157 385 L175 385 L172 465 L160 465 Z"
+                              fill="url(#heatGradient)" opacity="0.3" filter="url(#glow)"/>
+
+                        <!-- Центральная линия и молния -->
+                        <line x1="150" y1="30" x2="150" y2="495" 
+                              stroke="rgba(0,200,255,0.2)" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="150" y1="30" x2="150" y2="200" 
+                              stroke="rgba(0,200,255,0.4)" stroke-width="2"/>
+
+                        <!-- Индикаторы температуры зон -->
+                        <circle id="ind-chest" cx="150" cy="135" r="4" fill="#ff6b35" opacity="0.8"/>
+                        <circle id="ind-stomach" cx="150" cy="210" r="4" fill="#ff6b35" opacity="0.8"/>
+                        <circle id="ind-waist" cx="150" cy="260" r="4" fill="#ff6b35" opacity="0.8"/>
+                        <circle id="ind-l-shoulder" cx="95" cy="55" r="4" fill="#ff6b35" opacity="0.8"/>
+                        <circle id="ind-r-shoulder" cx="205" cy="55" r="4" fill="#ff6b35" opacity="0.8"/>
+                        <circle id="ind-l-thigh" cx="135" cy="340" r="4" fill="#ff6b35" opacity="0.8"/>
+                        <circle id="ind-r-thigh" cx="165" cy="340" r="4" fill="#ff6b35" opacity="0.8"/>
+                    </svg>
+                </div>
+
+                <div class="zones-legend">
+                    <div class="zone-legend-item"><div class="zone-legend-dot" style="background:#ff4444;"></div>Высокий нагрев</div>
+                    <div class="zone-legend-item"><div class="zone-legend-dot" style="background:#ff8c5a;"></div>Средний нагрев</div>
+                    <div class="zone-legend-item"><div class="zone-legend-dot" style="background:#ffcc88;"></div>Лёгкий нагрев</div>
+                    <div class="zone-legend-item"><div class="zone-legend-dot" style="background:#444;"></div>Выключено</div>
+                </div>
+            </div>
+
+            <!-- Правая панель — Мониторинг -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span class="icon">📊</span>
+                    Мониторинг системы
+                </div>
+
+                <div class="battery-section">
+                    <div class="battery-header">
+                        <span class="battery-label">🔋 Уровень заряда</span>
+                        <span id="battery-status">Норма</span>
+                    </div>
+                    <div class="battery-display">
+                        <div class="battery-icon">
+                            <div class="battery-fill" id="battery-fill" style="width: 85%;"></div>
+                        </div>
+                        <div class="battery-text" id="battery-text">85%</div>
+                    </div>
+                    <div class="battery-time" id="battery-time">Осталось: ~3ч 24мин</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="battery-progress" style="width: 85%; background: linear-gradient(90deg, #00ff88, #00cc66);"></div>
+                    </div>
+                </div>
+
+                <div class="temp-section">
+                    <div class="temp-header">
+                        <span class="temp-label">🌡️ Температура</span>
+                        <span id="temp-status">Норма</span>
+                    </div>
+                    <div class="temp-display">
+                        <div class="temp-gauge">
+                            <svg viewBox="0 0 120 120" width="120" height="120">
+                                <circle class="temp-gauge-bg" cx="60" cy="60" r="50"/>
+                                <circle id="temp-gauge-fill" class="temp-gauge-fill" cx="60" cy="60" r="50"
+                                        stroke-dasharray="314" stroke-dashoffset="157" stroke="#00e5ff"/>
+                            </svg>
+                            <div class="temp-value" id="temp-value">+24°</div>
+                        </div>
+                        <div class="temp-details">
+                            <div class="temp-detail-row">
+                                <span class="temp-detail-label">Внешняя</span>
+                                <span class="temp-detail-value" id="temp-ambient">-15°C</span>
+                            </div>
+                            <div class="temp-detail-row">
+                                <span class="temp-detail-label">Внутренняя</span>
+                                <span class="temp-detail-value" id="temp-internal">+24°C</span>
+                            </div>
+                            <div class="temp-detail-row">
+                                <span class="temp-detail-label">Макс. зона</span>
+                                <span class="temp-detail-value" id="temp-max">+28°C</span>
+                            </div>
+                            <div class="temp-detail-row">
+                                <span class="temp-detail-label">Потребление</span>
+                                <span class="temp-detail-value" id="power-consumption">12W</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="thermometer-visual">
+                        <div class="thermometer-marks">
+                            <span>+50°</span>
+                            <span>+25°</span>
+                            <span>0°</span>
+                            <span>-25°</span>
+                            <span>-50°</span>
+                        </div>
+                        <div class="thermometer-bar">
+                            <div class="thermometer-fill" id="thermometer-fill" style="height: 50%; background: linear-gradient(to top, #00e5ff, #00ff88);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-toggle">
+                    <span class="activity-toggle-label">🏃 Активность пользователя</span>
+                    <div class="toggle-switch" id="activity-toggle" onclick="toggleActivity()"></div>
+                </div>
+
+                <div class="system-status">
+                    <div class="status-item">
+                        <div class="status-label">Зоны активны</div>
+                        <div class="status-value" id="active-zones">12/12</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Троттлинг</div>
+                        <div class="status-value" id="throttling-status">Выкл</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Защита</div>
+                        <div class="status-value" id="protection-status">Активна</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Стабильность</div>
+                        <div class="status-value" id="stability-status">100%</div>
+                    </div>
+                </div>
+
+                <div class="temp-chart">
+                    <canvas id="tempChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Нижняя панель — Предупреждения -->
+        <div class="panel" style="margin-top: 25px;">
+            <div class="panel-title">
+                <span class="icon">🔔</span>
+                Системные уведомления
+            </div>
+            <div class="alerts-section" id="alerts-container">
+                <div class="alert-item alert-info">
+                    <span class="alert-icon">ℹ️</span>
+                    <span>Система готова к работе. Выберите режим обогрева.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            TechnoAtlant © 2024 — Инновационное тепло для экстремальных условий<br>
+            Интерактивная демонстрация продукта | MVP за 3 дня
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

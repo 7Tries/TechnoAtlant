@@ -1,0 +1,697 @@
+/* ======== БАЗОВЫЕ СТИЛИ ======== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Exo 2', sans-serif;
+    background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0d1b2a 100%);
+    min-height: 100vh;
+    color: #e0e8ff;
+    overflow-x: hidden;
+}
+
+/* ======== АУРОРА (СЕВЕРНОЕ СИЯНИЕ) ======== */
+.aurora-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.aurora-bg::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(ellipse at 20% 20%, rgba(0, 255, 200, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(0, 180, 255, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(100, 200, 255, 0.05) 0%, transparent 50%);
+    animation: auroraMove 15s ease-in-out infinite alternate;
+}
+
+@keyframes auroraMove {
+    0% { transform: translate(-10%, -10%) rotate(0deg); }
+    100% { transform: translate(10%, 10%) rotate(5deg); }
+}
+
+/* ======== СНЕЖИНКИ ======== */
+.snowflake {
+    position: fixed;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1em;
+    animation: fall linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+/* ======== ГЛАВНЫЙ КОНТЕЙНЕР ======== */
+.main-container {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ======== ШАПКА ======== */
+.header {
+    text-align: center;
+    padding: 30px 0;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.8em;
+    font-weight: 900;
+    background: linear-gradient(90deg, #00e5ff, #00ffc8, #00e5ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+    text-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+    letter-spacing: 2px;
+}
+
+.header .subtitle {
+    font-size: 1.2em;
+    color: #88aacc;
+    margin-top: 10px;
+    font-weight: 300;
+}
+
+@keyframes shimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+/* ======== СЕТКА КОНТЕНТА ======== */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+/* ======== ПАНЕЛИ ======== */
+.panel {
+    background: rgba(10, 25, 50, 0.7);
+    border: 1px solid rgba(0, 200, 255, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.panel:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(0, 200, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.panel-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #00e5ff;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.panel-title .icon {
+    font-size: 1.3em;
+}
+
+/* ======== КОСТЮМ (SVG) ======== */
+.suit-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+}
+
+.suit-svg {
+    width: 100%;
+    max-width: 320px;
+    filter: drop-shadow(0 0 20px rgba(0, 200, 255, 0.2));
+}
+
+.heat-zone {
+    transition: all 0.5s ease;
+    cursor: pointer;
+}
+
+.heat-zone:hover {
+    filter: brightness(1.3);
+}
+
+/* ======== РЕЖИМЫ ======== */
+.mode-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    border: 2px solid rgba(0, 200, 255, 0.2);
+    border-radius: 15px;
+    background: rgba(0, 30, 60, 0.5);
+    color: #a0c0e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    text-align: left;
+}
+
+.mode-btn:hover {
+    border-color: rgba(0, 200, 255, 0.5);
+    background: rgba(0, 50, 100, 0.5);
+    transform: translateX(5px);
+}
+
+.mode-btn.active {
+    border-color: #00e5ff;
+    background: linear-gradient(135deg, rgba(0, 100, 150, 0.5), rgba(0, 50, 100, 0.5));
+    color: #00e5ff;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+}
+
+.mode-btn .mode-icon {
+    font-size: 1.5em;
+    width: 40px;
+    text-align: center;
+}
+
+.mode-btn .mode-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.mode-btn .mode-name {
+    font-weight: 700;
+    font-size: 1.05em;
+}
+
+.mode-btn .mode-desc {
+    font-size: 0.8em;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+/* ======== СЦЕНАРИИ ======== */
+.scenario-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.scenario-btn {
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 107, 53, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 107, 53, 0.1);
+    color: #ff8c5a;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.9em;
+    font-weight: 600;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scenario-btn:hover {
+    background: rgba(255, 107, 53, 0.2);
+    border-color: rgba(255, 107, 53, 0.5);
+    transform: translateX(5px);
+}
+
+.scenario-btn.active {
+    background: rgba(255, 107, 53, 0.3);
+    border-color: #ff6b35;
+    box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+}
+
+/* ======== БАТАРЕЯ ======== */
+.battery-section {
+    margin-bottom: 25px;
+}
+
+.battery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.battery-label {
+    font-size: 0.9em;
+    color: #88aacc;
+}
+
+.battery-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.battery-icon {
+    width: 60px;
+    height: 30px;
+    border: 2px solid #444;
+    border-radius: 5px;
+    position: relative;
+    padding: 3px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.battery-icon::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 12px;
+    background: #444;
+    border-radius: 0 2px 2px 0;
+}
+
+.battery-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: all 0.5s ease;
+    background: linear-gradient(90deg, #00ff88, #00cc66);
+}
+
+.battery-fill.low {
+    background: linear-gradient(90deg, #ff4444, #cc3333);
+}
+
+.battery-fill.medium {
+    background: linear-gradient(90deg, #ffaa00, #cc8800);
+}
+
+.battery-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
+.battery-text.critical {
+    color: #ff4444;
+    animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.battery-time {
+    font-size: 0.85em;
+    color: #88aacc;
+    margin-top: 5px;
+}
+
+/* ======== ТЕМПЕРАТУРА ======== */
+.temp-section {
+    margin-bottom: 25px;
+}
+
+.temp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.temp-label {
+    font-size: 0.9em;
+    color: #88aacc;
+}
+
+.temp-display {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.temp-gauge {
+    width: 120px;
+    height: 120px;
+    position: relative;
+}
+
+.temp-gauge svg {
+    transform: rotate(-90deg);
+}
+
+.temp-gauge-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 10;
+}
+
+.temp-gauge-fill {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease, stroke 0.5s ease;
+}
+
+.temp-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8em;
+    font-weight: 900;
+}
+
+.temp-details {
+    flex: 1;
+}
+
+.temp-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.9em;
+}
+
+.temp-detail-row:last-child {
+    border-bottom: none;
+}
+
+.temp-detail-label {
+    color: #88aacc;
+}
+
+.temp-detail-value {
+    font-weight: 600;
+    color: #00e5ff;
+}
+
+/* ======== ТЕРМОМЕТР ======== */
+.thermometer-visual {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.thermometer-bar {
+    width: 20px;
+    height: 150px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.thermometer-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 0 0 10px 10px;
+    transition: height 0.5s ease, background 0.5s ease;
+}
+
+.thermometer-marks {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 150px;
+    font-size: 0.7em;
+    color: #88aacc;
+}
+
+/* ======== АКТИВНОСТЬ ======== */
+.activity-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    margin-top: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.activity-toggle-label {
+    font-size: 0.9em;
+    color: #a0c0e0;
+}
+
+.toggle-switch {
+    width: 50px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.toggle-switch.active {
+    background: #00e5ff;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.active::after {
+    transform: translateX(24px);
+}
+
+/* ======== СТАТУС СИСТЕМЫ ======== */
+.system-status {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.status-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+}
+
+.status-item .status-label {
+    font-size: 0.75em;
+    color: #88aacc;
+    margin-bottom: 5px;
+}
+
+.status-item .status-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #00e5ff;
+}
+
+.status-item .status-value.warning {
+    color: #ffaa00;
+}
+
+.status-item .status-value.danger {
+    color: #ff4444;
+}
+
+/* ======== ПРОГРЕСС-БАР ======== */
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease, background 0.5s ease;
+}
+
+/* ======== ГРАФИК ======== */
+.temp-chart {
+    width: 100%;
+    height: 120px;
+    margin-top: 15px;
+    position: relative;
+}
+
+.temp-chart canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* ======== УВЕДОМЛЕНИЯ ======== */
+.alerts-section {
+    min-height: 100px;
+}
+
+.alert-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.alert-warning {
+    background: rgba(255, 170, 0, 0.15);
+    border: 1px solid rgba(255, 170, 0, 0.3);
+    color: #ffaa00;
+}
+
+.alert-danger {
+    background: rgba(255, 68, 68, 0.15);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff4444;
+    animation: slideIn 0.3s ease, pulseAlert 1s ease-in-out infinite;
+}
+
+.alert-info {
+    background: rgba(0, 200, 255, 0.15);
+    border: 1px solid rgba(0, 200, 255, 0.3);
+    color: #00e5ff;
+}
+
+@keyframes pulseAlert {
+    0%, 100% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 15px rgba(255, 68, 68, 0.4); }
+}
+
+.alert-icon {
+    font-size: 1.2em;
+}
+
+/* ======== ТРОТТЛИНГ ======== */
+.throttling-indicator {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    background: rgba(255, 0, 100, 0.15);
+    border: 1px solid rgba(255, 0, 100, 0.4);
+    border-radius: 10px;
+    margin-top: 15px;
+    color: #ff5090;
+    font-weight: 600;
+    font-size: 0.9em;
+    animation: pulseAlert 1s ease-in-out infinite;
+}
+
+.throttling-indicator.visible {
+    display: flex;
+}
+
+/* ======== ЛЕГЕНДА ЗОН ======== */
+.zones-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.zone-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8em;
+    padding: 4px 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 107, 53, 0.2);
+}
+
+.zone-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff6b35;
+}
+
+/* ======== ФУТЕР ======== */
+.footer {
+    text-align: center;
+    padding: 30px;
+    color: #557799;
+    font-size: 0.85em;
+    margin-top: 20px;
+}
+
+/* ======== АДАПТИВНОСТЬ ======== */
+@media (max-width: 1100px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+    .suit-container {
+        min-height: 400px;
+    }
+}
