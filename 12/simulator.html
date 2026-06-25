@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoAtlant — Симулятор нагревательных элементов</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --ice-blue: #a8d8ea;
+            --deep-blue: #0a1628;
+            --arctic-white: #e8f4f8;
+            --frost-cyan: #00d4ff;
+            --aurora-green: #00ffaa;
+            --warning-orange: #ff6b35;
+            --danger-red: #ff2d55;
+            --glass: rgba(10, 22, 40, 0.9);
+            --glass-border: rgba(0, 212, 255, 0.15);
+            --heat-low: #4a90d9;
+            --heat-med: #ff6b35;
+            --heat-high: #ff2d55;
+        }
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--deep-blue);
+            color: var(--arctic-white);
+            overflow-x: hidden; min-height: 100vh;
+        }
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000; padding: 0 40px;
+        }
+        .nav-container {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px;
+        }
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem; font-weight: 900;
+            color: var(--frost-cyan);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            letter-spacing: 3px;
+        }
+        .logo span { color: var(--arctic-white); }
+        .nav-links {
+            display: flex; gap: 30px; list-style: none;
+        }
+        .nav-links a {
+            color: var(--arctic-white); text-decoration: none;
+            font-weight: 500; font-size: 0.95rem;
+            transition: all 0.3s; position: relative;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 2px; background: var(--frost-cyan);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover { color: var(--frost-cyan); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--frost-cyan); }
+        .nav-links a.active::after { width: 100%; }
+
+        /* Main content */
+        .main-content {
+            padding: 100px 30px 40px; max-width: 1600px; margin: 0 auto;
+        }
+        .page-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            text-align: center; margin-bottom: 10px; color: var(--arctic-white);
+        }
+        .page-subtitle {
+            text-align: center; color: rgba(232, 244, 248, 0.6);
+            margin-bottom: 30px; font-size: 1rem;
+        }
+
+        /* Simulator grid */
+        .simulator-grid {
+            display: grid; grid-template-columns: 1fr 400px 1fr; gap: 30px;
+            align-items: start;
+        }
+        @media (max-width: 1200px) {
+            .simulator-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Panel styling */
+        .panel {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .panel-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1rem;
+            color: var(--frost-cyan); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* Suit visualization */
+        .suit-display {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px;
+        }
+        .suit-body {
+            width: 260px; height: 420px;
+            position: relative; margin: 0 auto;
+        }
+        .suit-svg {
+            width: 100%; height: 100%;
+        }
+        .heat-zone-path {
+            fill: rgba(0, 212, 255, 0.1);
+            stroke: rgba(0, 212, 255, 0.3);
+            stroke-width: 1;
+            transition: all 0.5s ease;
+        }
+        .heat-zone-path.active-low {
+            fill: rgba(74, 144, 217, 0.4);
+            stroke: var(--heat-low);
+            filter: drop-shadow(0 0 8px rgba(74, 144, 217, 0.6));
+        }
+        .heat-zone-path.active-med {
+            fill: rgba(255, 107, 53, 0.5);
+            stroke: var(--heat-med);
+            filter: drop-shadow(0 0 12px rgba(255, 107, 53, 0.7));
+        }
+        .heat-zone-path.active-high {
+            fill: rgba(255, 45, 85, 0.6);
+            stroke: var(--heat-high);
+            filter: drop-shadow(0 0 16px rgba(255, 45, 85, 0.8));
+        }
+        .heat-zone-path.overheat {
+            fill: rgba(255, 0, 0, 0.7) !important;
+            stroke: #ff0000 !important;
+            animation: overheatFlash 0.5s ease-in-out infinite alternate;
+        }
+        @keyframes overheatFlash {
+            from { filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8)); }
+            to { filter: drop-shadow(0 0 40px rgba(255, 0, 0, 1)); }
+        }
+        .zone-label {
+            position: absolute; font-size: 0.75rem;
+            color: rgba(232, 244, 248, 0.6);
+            font-family: 'Orbitron', sans-serif;
+        }
+        .zone-temp {
+            position: absolute; font-size: 0.8rem;
+            font-family: 'Orbitron', sans-serif; font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        /* Mode selector */
+        .mode-selector {
+            display: flex; gap: 10px; margin-bottom: 25px;
+        }
+        .mode-btn {
+            flex: 1; padding: 14px 10px; border-radius: 10px;
+            border: 1px solid var(--glass-border); background: rgba(10, 22, 40, 0.6);
+            color: var(--arctic-white); cursor: pointer;
+            font-family: 'Exo 2', sans-serif; font-size: 0.85rem;
+            transition: all 0.3s; text-align: center;
+        }
+        .mode-btn:hover { border-color: var(--frost-cyan); }
+        .mode-btn.active {
+            border-color: var(--frost-cyan);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 170, 0.1));
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+        .mode-btn.active.eco { border-color: var(--aurora-green); box-shadow: 0 0 20px rgba(0, 255, 170, 0.2); }
+        .mode-btn.active.std { border-color: var(--frost-cyan); box-shadow: 0 0 20px rgba(0, 212, 255, 0.2); }
+        .mode-btn.active.max { border-color: var(--heat-high); box-shadow: 0 0 20px rgba(255, 45, 85, 0.2); }
+
+        /* Battery */
+        .battery-container { margin-bottom: 20px; }
+        .battery-label {
+            display: flex; justify-content: space-between;
+            margin-bottom: 8px; font-size: 0.9rem;
+        }
+        .battery-bar {
+            width: 100%; height: 24px;
+            background: rgba(10, 22, 40, 0.6);
+            border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+        .battery-fill {
+            height: 100%; border-radius: 12px;
+            transition: width 0.5s ease, background 0.5s ease;
+            position: relative;
+        }
+        .battery-fill::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .battery-fill.good { background: linear-gradient(90deg, var(--aurora-green), #00cc88); }
+        .battery-fill.medium { background: linear-gradient(90deg, var(--warning-orange), #ff8c42); }
+        .battery-fill.low { background: linear-gradient(90deg, var(--danger-red), #ff5e3a); animation: pulseLow 1s infinite; }
+        @keyframes pulseLow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .battery-time {
+            text-align: right; font-size: 0.85rem;
+            color: rgba(232, 244, 248, 0.6); margin-top: 5px;
+        }
+
+        /* Temperature display */
+        .temp-big {
+            font-family: 'Orbitron', sans-serif; font-size: 3rem;
+            text-align: center; margin: 20px 0;
+            transition: color 0.3s;
+        }
+        .temp-big.normal { color: var(--frost-cyan); }
+        .temp-big.warm { color: var(--warning-orange); }
+        .temp-big.hot { color: var(--danger-red); animation: tempPulse 0.5s infinite; }
+        @keyframes tempPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .temp-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            margin-top: 15px;
+        }
+        .temp-info-item {
+            background: rgba(10, 22, 40, 0.5); padding: 12px;
+            border-radius: 8px; text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+        .temp-info-item .label { font-size: 0.75rem; color: rgba(232, 244, 248, 0.5); }
+        .temp-info-item .value {
+            font-family: 'Orbitron', sans-serif; font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        /* Alerts */
+        .alert-panel {
+            margin-top: 20px; min-height: 60px;
+        }
+        .alert {
+            padding: 12px 16px; border-radius: 10px;
+            margin-bottom: 8px; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 10px;
+            animation: alertIn 0.3s ease;
+        }
+        @keyframes alertIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .alert.warning {
+            background: rgba(255, 107, 53, 0.15);
+            border: 1px solid rgba(255, 107, 53, 0.4);
+            color: var(--warning-orange);
+        }
+        .alert.danger {
+            background: rgba(255, 45, 85, 0.15);
+            border: 1px solid rgba(255, 45, 85, 0.4);
+            color: var(--danger-red);
+            animation: alertIn 0.3s ease, alertPulse 1s infinite;
+        }
+        .alert.info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--frost-cyan);
+        }
+        .alert.success {
+            background: rgba(0, 255, 170, 0.1);
+            border: 1px solid rgba(0, 255, 170, 0.3);
+            color: var(--aurora-green);
+        }
+        @keyframes alertPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 45, 85, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(255, 45, 85, 0.4); }
+        }
+
+        /* Scenario buttons */
+        .scenario-btns {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .scenario-btn {
+            padding: 14px 16px; border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: rgba(10, 22, 40, 0.6);
+            color: var(--arctic-white); cursor: pointer;
+            font-family: 'Exo 2', sans-serif; font-size: 0.9rem;
+            transition: all 0.3s; text-align: left;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .scenario-btn:hover { border-color: var(--frost-cyan); background: rgba(0, 212, 255, 0.05); }
+        .scenario-btn.active {
+            border-color: var(--frost-cyan);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 255, 170, 0.05));
+        }
+        .scenario-btn .icon { font-size: 1.3rem; }
+
+        /* Zone toggles */
+        .zone-toggles {
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .zone-toggle {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; border-radius: 8px;
+            background: rgba(10, 22, 40, 0.5);
+            border: 1px solid var(--glass-border);
+        }
+        .zone-toggle-name { font-size: 0.9rem; }
+        .toggle-switch {
+            width: 44px; height: 24px; border-radius: 12px;
+            background: rgba(232, 244, 248, 0.2); cursor: pointer;
+            position: relative; transition: all 0.3s;
+        }
+        .toggle-switch.on { background: var(--frost-cyan); }
+        .toggle-switch::after {
+            content: ''; position: absolute; top: 2px; left: 2px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: white; transition: all 0.3s;
+        }
+        .toggle-switch.on::after { left: 22px; }
+        .zone-temp-mini {
+            font-family: 'Orbitron', sans-serif; font-size: 0.85rem;
+            width: 50px; text-align: right;
+        }
+
+        /* Log */
+        .log-panel {
+            max-height: 200px; overflow-y: auto;
+            font-size: 0.8rem; color: rgba(232, 244, 248, 0.6);
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2); border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        .log-entry { margin-bottom: 4px; }
+        .log-time { color: var(--frost-cyan); }
+
+        /* Status indicator */
+        .status-bar {
+            display: flex; gap: 15px; flex-wrap: wrap;
+            justify-content: center; margin-bottom: 20px;
+        }
+        .status-pill {
+            padding: 6px 16px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600;
+            border: 1px solid var(--glass-border);
+            background: rgba(10, 22, 40, 0.6);
+        }
+        .status-pill.on { border-color: var(--aurora-green); color: var(--aurora-green); }
+        .status-pill.off { border-color: rgba(232, 244, 248, 0.3); color: rgba(232, 244, 248, 0.5); }
+        .status-pill.warn { border-color: var(--warning-orange); color: var(--warning-orange); }
+        .status-pill.crit { border-color: var(--danger-red); color: var(--danger-red); animation: critPulse 0.8s infinite; }
+        @keyframes critPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .simulator-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+        @media (max-width: 600px) {
+            .suit-body { width: 200px; height: 320px; }
+            .temp-big { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">TECHNO<span>ATLANT</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="product.html">Продукт</a></li>
+                <li><a href="simulator.html" class="active">Симулятор</a></li>
+                <li><a href="about.html">О проекте</a></li>
+                <li><a href="contacts.html">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h1 class="page-title">ИНТЕРАКТИВНЫЙ СИМУЛЯТОР</h1>
+        <p class="page-subtitle">Тестирование логики работы нагревательных элементов TechnoAtlant</p>
+
+        <div class="simulator-grid">
+            <!-- LEFT PANEL: Controls -->
+            <div class="left-column">
+                <div class="panel">
+                    <div class="panel-title">⚙️ РЕЖИМЫ РАБОТЫ</div>
+                    <div class="mode-selector">
+                        <button class="mode-btn" data-mode="eco" onclick="setMode('eco')">
+                            <div style="font-size:1.3rem;margin-bottom:4px">🌿</div>
+                            Эконом
+                        </button>
+                        <button class="mode-btn active std" data-mode="std" onclick="setMode('std')">
+                            <div style="font-size:1.3rem;margin-bottom:4px">⚡</div>
+                            Стандарт
+                        </button>
+                        <button class="mode-btn" data-mode="max" onclick="setMode('max')">
+                            <div style="font-size:1.3rem;margin-bottom:4px">🔥</div>
+                            Макс
+                        </button>
+                    </div>
+
+                    <div class="panel-title" style="margin-top:25px">🔋 ИНДИКАЦИЯ ЗАРЯДА</div>
+                    <div class="battery-container">
+                        <div class="battery-label">
+                            <span>Уровень заряда</span>
+                            <span id="battery-pct">100%</span>
+                        </div>
+                        <div class="battery-bar">
+                            <div class="battery-fill good" id="battery-fill" style="width:100%"></div>
+                        </div>
+                        <div class="battery-time" id="battery-time">Осталось: 8ч 00м</div>
+                    </div>
+
+                    <div class="panel-title" style="margin-top:25px">🌡️ ТЕМПЕРАТУРА КОСТЮМА</div>
+                    <div class="temp-big normal" id="main-temp">+25.0°C</div>
+                    <div class="temp-info">
+                        <div class="temp-info-item">
+                            <div class="label">Окружающая</div>
+                            <div class="value" id="ambient-temp">−30°C</div>
+                        </div>
+                        <div class="temp-info-item">
+                            <div class="label">Целевая</div>
+                            <div class="value" id="target-temp">+25°C</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:20px">
+                    <div class="panel-title">📊 СТАТУС СИСТЕМ</div>
+                    <div class="status-bar" id="status-bar">
+                        <span class="status-pill on" id="st-power">Питание ON</span>
+                        <span class="status-pill on" id="st-heat">Нагрев ON</span>
+                        <span class="status-pill off" id="st-overheat">Перегрев OFF</span>
+                        <span class="status-pill off" id="st-throttle">Троттлинг OFF</span>
+                        <span class="status-pill off" id="st-lowbat">Низкий заряд OFF</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CENTER: Suit visualization -->
+            <div class="panel suit-display">
+                <div class="panel-title" style="align-self:stretch">👤 СХЕМА КОСТЮМА</div>
+                <div class="suit-body">
+                    <svg class="suit-svg" viewBox="0 0 260 420">
+                        <!-- Body outline -->
+                        <ellipse cx="130" cy="55" rx="35" ry="40" fill="none" stroke="rgba(0,212,255,0.3)" stroke-width="2"/>
+                        <!-- Chest zone -->
+                        <path id="zone-chest" class="heat-zone-path" d="M 95 45 Q 130 35 165 45 L 160 95 Q 130 100 100 95 Z"/>
+                        <!-- Back zone -->
+                        <path id="zone-back" class="heat-zone-path" d="M 100 40 Q 130 30 160 40 L 155 90 Q 130 95 105 90 Z"/>
+                        <!-- Left arm -->
+                        <path id="zone-arm-l" class="heat-zone-path" d="M 95 55 L 45 75 L 40 170 L 55 175 L 70 100 Z"/>
+                        <!-- Right arm -->
+                        <path id="zone-arm-r" class="heat-zone-path" d="M 165 55 L 215 75 L 220 170 L 205 175 L 190 100 Z"/>
+                        <!-- Left leg -->
+                        <path id="zone-leg-l" class="heat-zone-path" d="M 105 180 L 90 280 L 110 285 L 120 200 Z"/>
+                        <!-- Right leg -->
+                        <path id="zone-leg-r" class="heat-zone-path" d="M 155 180 L 170 280 L 150 285 L 140 200 Z"/>
+                        <!-- Body lines -->
+                        <line x1="130" y1="95" x2="130" y2="180" stroke="rgba(0,212,255,0.2)" stroke-width="1"/>
+                        <line x1="100" y1="180" x2="160" y2="180" stroke="rgba(0,212,255,0.2)" stroke-width="1"/>
+                    </svg>
+                    <div class="zone-label" style="top:65px;left:50%;transform:translateX(-50%)">ГРУДЬ</div>
+                    <div class="zone-label" style="top:55px;left:50%;transform:translateX(-50%)">СПИНА</div>
+                    <div class="zone-label" style="top:120px;left:10px">Л.РУКА</div>
+                    <div class="zone-label" style="top:120px;right:10px">П.РУКА</div>
+                    <div class="zone-label" style="top:230px;left:20px">Л.НОГА</div>
+                    <div class="zone-label" style="top:230px;right:20px">П.НОГА</div>
+                </div>
+                <div class="temp-info" style="width:100%;margin-top:15px">
+                    <div class="temp-info-item">
+                        <div class="label">Режим</div>
+                        <div class="value" id="mode-display" style="color:var(--frost-cyan)">СТАНДАРТ</div>
+                    </div>
+                    <div class="temp-info-item">
+                        <div class="label">Мощность</div>
+                        <div class="value" id="power-display">50%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: Scenarios & Zones -->
+            <div class="right-column">
+                <div class="panel">
+                    <div class="panel-title">🎬 СЦЕНАРИИ ИСПЫТАНИЙ</div>
+                    <div class="scenario-btns">
+                        <button class="scenario-btn" id="sc-normal" onclick="setScenario('normal')">
+                            <span class="icon">❄️</span>
+                            <div>
+                                <div style="font-weight:600">Нормальная эксплуатация</div>
+                                <div style="font-size:0.8rem;color:rgba(232,244,248,0.5)">−30°C, активный пользователь</div>
+                            </div>
+                        </button>
+                        <button class="scenario-btn active" id="sc-static" onclick="setScenario('static')">
+                            <span class="icon">🧍</span>
+                            <div>
+                                <div style="font-weight:600">Статичное положение</div>
+                                <div style="font-size:0.8rem;color:rgba(232,244,248,0.5)">−30°C, пользователь неподвижен</div>
+                            </div>
+                        </button>
+                        <button class="scenario-btn" id="sc-enclosed" onclick="setScenario('enclosed')">
+                            <span class="icon">🏠</span>
+                            <div>
+                                <div style="font-weight:600">Замкнутое пространство</div>
+                                <div style="font-size:0.8rem;color:rgba(232,244,248,0.5)">+20°C, активный пользователь → перегрев</div>
+                            </div>
+                        </button>
+                        <button class="scenario-btn" id="sc-lowbat" onclick="setScenario('lowbat')">
+                            <span class="icon">🔋</span>
+                            <div>
+                                <div style="font-weight:600">Критический заряд</div>
+                                <div style="font-size:0.8rem;color:rgba(232,244,248,0.5)">15% батареи, авто-экономия</div>
+                            </div>
+                        </button>
+                        <button class="scenario-btn" id="sc-extreme" onclick="setScenario('extreme')">
+                            <span class="icon">🌡️</span>
+                            <div>
+                                <div style="font-weight:600">Экстремальный холод</div>
+                                <div style="font-size:0.8rem;color:rgba(232,244,248,0.5)">−50°C, максимальный нагрев</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:20px">
+                    <div class="panel-title">🎯 УПРАВЛЕНИЕ ЗОНАМИ</div>
+                    <div class="zone-toggles" id="zone-toggles">
+                        <div class="zone-toggle">
+                            <span class="zone-toggle-name">Грудь</span>
+                            <span class="zone-temp-mini" id="temp-chest">+25°</span>
+                            <div class="toggle-switch on" data-zone="chest" onclick="toggleZone(this)"></div>
+                        </div>
+                        <div class="zone-toggle">
+                            <span class="zone-toggle-name">Спина</span>
+                            <span class="zone-temp-mini" id="temp-back">+25°</span>
+                            <div class="toggle-switch on" data-zone="back" onclick="toggleZone(this)"></div>
+                        </div>
+                        <div class="zone-toggle">
+                            <span class="zone-toggle-name">Левая рука</span>
+                            <span class="zone-temp-mini" id="temp-arm-l">+25°</span>
+                            <div class="toggle-switch on" data-zone="arm-l" onclick="toggleZone(this)"></div>
+                        </div>
+                        <div class="zone-toggle">
+                            <span class="zone-toggle-name">Правая рука</span>
+                            <span class="zone-temp-mini" id="temp-arm-r">+25°</span>
+                            <div class="toggle-switch on" data-zone="arm-r" onclick="toggleZone(this)"></div>
+                        </div>
+                        <div class="zone-toggle">
+                            <span class="zone-toggle-name">Левая нога</span>
+                            <span class="zone-temp-mini" id="temp-leg-l">+25°</span>
+                            <div class="toggle-switch on" data-zone="leg-l" onclick="toggleZone(this)"></div>
+                        </div>
+                        <div class="zone-toggle">
+                            <span class="zone-toggle-name">Правая нога</span>
+                            <span class="zone-temp-mini" id="temp-leg-r">+25°</span>
+                            <div class="toggle-switch on" data-zone="leg-r" onclick="toggleZone(this)"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:20px">
+                    <div class="panel-title">⚠️ СИСТЕМНЫЕ СООБЩЕНИЯ</div>
+                    <div class="alert-panel" id="alert-panel">
+                        <div class="alert info">Система готова к работе. Выберите режим и сценарий.</div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:20px">
+                    <div class="panel-title">📝 ЛОГ СОБЫТИЙ</div>
+                    <div class="log-panel" id="log-panel">
+                        <div class="log-entry"><span class="log-time">[13:08:00]</span> Симулятор запущен</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let state = {
+            mode: 'std',
+            scenario: 'static',
+            battery: 100,
+            zones: { chest: true, back: true, 'arm-l': true, 'arm-r': true, 'leg-l': true, 'leg-r': true },
+            temps: { chest: 25, back: 25, 'arm-l': 25, 'arm-r': 25, 'leg-l': 25, 'leg-r': 25 },
+            ambient: -30,
+            target: 25,
+            overheat: false,
+            throttle: false,
+            lowBattery: false,
+            simTime: 0
+        };
+
+        const modeConfig = {
+            eco: { power: 30, drain: 0.8, color: 'var(--aurora-green)', label: 'ЭКОНОМ', maxTemp: 30 },
+            std: { power: 50, drain: 1.5, color: 'var(--frost-cyan)', label: 'СТАНДАРТ', maxTemp: 40 },
+            max: { power: 80, drain: 3.0, color: 'var(--heat-high)', label: 'МАКСИМУМ', maxTemp: 50 }
+        };
+
+        const scenarioConfig = {
+            normal: { ambient: -30, activityBonus: 3, label: 'Активный пользователь' },
+            static: { ambient: -30, activityBonus: 0, label: 'Статичное положение' },
+            enclosed: { ambient: 20, activityBonus: 8, label: 'Замкнутое пространство' },
+            lowbat: { ambient: -30, activityBonus: 0, label: 'Критический заряд' },
+            extreme: { ambient: -50, activityBonus: 0, label: 'Экстремальный холод' }
+        };
+
+        let simInterval = null;
+
+        function log(msg) {
+            const now = new Date();
+            const time = now.toTimeString().slice(0, 8);
+            const panel = document.getElementById('log-panel');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
+            panel.insertBefore(entry, panel.firstChild);
+            if (panel.children.length > 20) panel.removeChild(panel.lastChild);
+        }
+
+        function showAlert(text, type) {
+            const panel = document.getElementById('alert-panel');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = text;
+            panel.insertBefore(alert, panel.firstChild);
+            if (panel.children.length > 4) panel.removeChild(panel.lastChild);
+        }
+
+        function clearAlerts() {
+            document.getElementById('alert-panel').innerHTML = '';
+        }
+
+        function setMode(mode) {
+            state.mode = mode;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active', 'eco', 'std', 'max'));
+            document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('active', mode);
+            document.getElementById('mode-display').textContent = modeConfig[mode].label;
+            document.getElementById('mode-display').style.color = modeConfig[mode].color;
+            document.getElementById('power-display').textContent = modeConfig[mode].power + '%';
+            log(`Режим изменён: ${modeConfig[mode].label}`);
+            updateSimulation();
+        }
+
+        function setScenario(sc) {
+            state.scenario = sc;
+            document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sc-' + sc).classList.add('active');
+            state.ambient = scenarioConfig[sc].ambient;
+            document.getElementById('ambient-temp').textContent = (state.ambient > 0 ? '+' : '') + state.ambient + '°C';
+
+            if (sc === 'lowbat') {
+                state.battery = 15;
+                state.mode = 'eco';
+                setMode('eco');
+                showAlert('Критический заряд! Активирован режим экономии.', 'danger');
+                log('Активирован сценарий: критический заряд (15%)');
+            } else if (sc === 'extreme') {
+                state.mode = 'max';
+                setMode('max');
+                showAlert('Экстремальный холод! Максимальный нагрев активирован.', 'warning');
+                log('Активирован сценарий: экстремальный холод (−50°C)');
+            } else if (sc === 'enclosed') {
+                showAlert('Высокая температура окружающей среды. Внимание: риск перегрева!', 'warning');
+                log('Активирован сценарий: замкнутое пространство (+20°C)');
+            } else {
+                log(`Активирован сценарий: ${scenarioConfig[sc].label}`);
+            }
+            updateSimulation();
+        }
+
+        function toggleZone(el) {
+            const zone = el.dataset.zone;
+            state.zones[zone] = !state.zones[zone];
+            el.classList.toggle('on');
+            log(`Зона ${zone}: ${state.zones[zone] ? 'ВКЛ' : 'ВЫКЛ'}`);
+            updateSimulation();
+        }
+
+        function updateZonesVisual() {
+            const mc = modeConfig[state.mode];
+            const zoneClass = state.mode === 'eco' ? 'active-low' : state.mode === 'std' ? 'active-med' : 'active-high';
+
+            Object.keys(state.zones).forEach(zone => {
+                const el = document.getElementById('zone-' + zone);
+                if (!el) return;
+                el.classList.remove('active-low', 'active-med', 'active-high', 'overheat');
+                if (state.zones[zone]) {
+                    if (state.overheat) {
+                        el.classList.add('overheat');
+                    } else {
+                        el.classList.add(zoneClass);
+                    }
+                }
+            });
+        }
+
+        function updateTemps() {
+            const mc = modeConfig[state.mode];
+            const sc = scenarioConfig[state.scenario];
+            let maxTemp = 0;
+
+            Object.keys(state.zones).forEach(zone => {
+                if (!state.zones[zone]) {
+                    state.temps[zone] = state.ambient;
+                } else {
+                    let target = state.target;
+                    if (state.scenario === 'enclosed') {
+                        target += sc.activityBonus;
+                    }
+                    let heatPower = mc.power / 100;
+                    if (state.throttle) heatPower *= 0.3;
+                    if (state.lowBattery) heatPower *= 0.5;
+
+                    let newTemp = state.ambient + (target - state.ambient) * heatPower;
+                    if (state.scenario === 'enclosed') {
+                        newTemp += sc.activityBonus * heatPower;
+                    }
+                    // Smooth transition
+                    state.temps[zone] = state.temps[zone] + (newTemp - state.temps[zone]) * 0.1;
+                }
+                if (state.temps[zone] > maxTemp) maxTemp = state.temps[zone];
+                document.getElementById('temp-' + zone).textContent = 
+                    (state.temps[zone] > 0 ? '+' : '') + state.temps[zone].toFixed(1) + '°';
+            });
+
+            // Update main temp display
+            const mainTemp = document.getElementById('main-temp');
+            mainTemp.textContent = (maxTemp > 0 ? '+' : '') + maxTemp.toFixed(1) + '°C';
+            if (maxTemp > 45) {
+                mainTemp.className = 'temp-big hot';
+            } else if (maxTemp > 35) {
+                mainTemp.className = 'temp-big warm';
+            } else {
+                mainTemp.className = 'temp-big normal';
+            }
+
+            return maxTemp;
+        }
+
+        function updateBattery() {
+            const mc = modeConfig[state.mode];
+            let activeZones = Object.values(state.zones).filter(z => z).length;
+            let drain = (mc.drain * activeZones / 6) * 0.05;
+
+            if (state.scenario === 'lowbat') {
+                state.battery = Math.max(0, state.battery - drain * 3);
+            } else {
+                state.battery = Math.max(0, state.battery - drain);
+            }
+
+            const pct = Math.round(state.battery);
+            document.getElementById('battery-pct').textContent = pct + '%';
+            document.getElementById('battery-fill').style.width = pct + '%';
+
+            const fill = document.getElementById('battery-fill');
+            fill.classList.remove('good', 'medium', 'low');
+            if (pct > 50) fill.classList.add('good');
+            else if (pct > 20) fill.classList.add('medium');
+            else fill.classList.add('low');
+
+            const hours = Math.floor(state.battery / 12.5);
+            const mins = Math.floor((state.battery % 12.5) * 4.8);
+            document.getElementById('battery-time').textContent = `Осталось: ${hours}ч ${mins.toString().padStart(2,'0')}м`;
+
+            // Low battery warning
+            if (pct <= 20 && !state.lowBattery) {
+                state.lowBattery = true;
+                showAlert('Низкий заряд батареи! Рекомендуется включить режим экономии.', 'warning');
+                log('ВНИМАНИЕ: Низкий заряд батареи (' + pct + '%)');
+            } else if (pct > 25) {
+                state.lowBattery = false;
+            }
+
+            // Critical battery
+            if (pct <= 5 && state.battery > 0) {
+                showAlert('КРИТИЧЕСКИЙ ЗАРЯД! Система будет отключена.', 'danger');
+                log('КРИТИЧЕСКИЙ ЗАРЯД! Отключение нагрева...');
+                Object.keys(state.zones).forEach(z => state.zones[z] = false);
+                document.querySelectorAll('.toggle-switch').forEach(el => el.classList.remove('on'));
+            }
+        }
+
+        function updateStatus(maxTemp) {
+            const mc = modeConfig[state.mode];
+
+            // Overheat detection
+            if (maxTemp > 45 && !state.overheat) {
+                state.overheat = true;
+                showAlert('ПЕРЕГРЕВ! Температура превысила 45°C. Активирована защита.', 'danger');
+                log('ПЕРЕГРЕВ ЗАФИКСИРОВАН! Троттлинг активирован.');
+            } else if (maxTemp < 40 && state.overheat) {
+                state.overheat = false;
+                showAlert('Температура нормализована. Защита отключена.', 'success');
+                log('Температура нормализована. Защита отключена.');
+            }
+
+            // Throttling
+            if (state.overheat && !state.throttle) {
+                state.throttle = true;
+                showAlert('Троттлинг активирован. Мощность снижена до 30%.', 'warning');
+            } else if (!state.overheat && state.throttle) {
+                state.throttle = false;
+            }
+
+            // Update status pills
+            document.getElementById('st-power').className = 'status-pill ' + (state.battery > 0 ? 'on' : 'off');
+            document.getElementById('st-power').textContent = 'Питание ' + (state.battery > 0 ? 'ON' : 'OFF');
+
+            const activeZones = Object.values(state.zones).filter(z => z).length;
+            document.getElementById('st-heat').className = 'status-pill ' + (activeZones > 0 ? 'on' : 'off');
+            document.getElementById('st-heat').textContent = 'Нагрев ' + (activeZones > 0 ? 'ON' : 'OFF');
+
+            document.getElementById('st-overheat').className = 'status-pill ' + (state.overheat ? 'crit' : 'off');
+            document.getElementById('st-overheat').textContent = 'Перегрев ' + (state.overheat ? 'ON' : 'OFF');
+
+            document.getElementById('st-throttle').className = 'status-pill ' + (state.throttle ? 'warn' : 'off');
+            document.getElementById('st-throttle').textContent = 'Троттлинг ' + (state.throttle ? 'ON' : 'OFF');
+
+            document.getElementById('st-lowbat').className = 'status-pill ' + (state.lowBattery ? 'warn' : 'off');
+            document.getElementById('st-lowbat').textContent = 'Низкий заряд ' + (state.lowBattery ? 'ON' : 'OFF');
+        }
+
+        function updateSimulation() {
+            const maxTemp = updateTemps();
+            updateBattery();
+            updateStatus(maxTemp);
+            updateZonesVisual();
+        }
+
+        function startSimulation() {
+            if (simInterval) clearInterval(simInterval);
+            simInterval = setInterval(() => {
+                state.simTime++;
+                updateSimulation();
+            }, 1000);
+        }
+
+        // Initialize
+        startSimulation();
+        log('Симулятор инициализирован. Режим: СТАНДАРТ, Сценарий: Статичное положение');
+    </script>
+</body>
+</html>

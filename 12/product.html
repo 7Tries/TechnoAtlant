@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoAtlant — Продукт</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --ice-blue: #a8d8ea;
+            --deep-blue: #0a1628;
+            --arctic-white: #e8f4f8;
+            --frost-cyan: #00d4ff;
+            --aurora-green: #00ffaa;
+            --warning-orange: #ff6b35;
+            --danger-red: #ff2d55;
+            --glass: rgba(10, 22, 40, 0.9);
+            --glass-border: rgba(0, 212, 255, 0.15);
+        }
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--deep-blue);
+            color: var(--arctic-white);
+            overflow-x: hidden;
+        }
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000; padding: 0 40px;
+        }
+        .nav-container {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px;
+        }
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem; font-weight: 900;
+            color: var(--frost-cyan);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            letter-spacing: 3px;
+        }
+        .logo span { color: var(--arctic-white); }
+        .nav-links {
+            display: flex; gap: 30px; list-style: none;
+        }
+        .nav-links a {
+            color: var(--arctic-white); text-decoration: none;
+            font-weight: 500; font-size: 0.95rem;
+            transition: all 0.3s; position: relative;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 2px; background: var(--frost-cyan);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover { color: var(--frost-cyan); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--frost-cyan); }
+        .nav-links a.active::after { width: 100%; }
+
+        .page-header {
+            padding: 130px 40px 60px; text-align: center;
+            background: linear-gradient(180deg, #0d1f33, var(--deep-blue));
+        }
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .page-header p { color: rgba(232, 244, 248, 0.6); font-size: 1.1rem; }
+
+        .content { max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+
+        /* Product showcase */
+        .product-showcase {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+            align-items: center; margin-bottom: 80px;
+        }
+        .product-image {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 255, 170, 0.03));
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 40px; display: flex; justify-content: center; align-items: center;
+            min-height: 400px; position: relative; overflow: hidden;
+        }
+        .product-image::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.05) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .suit-render {
+            width: 200px; height: 350px;
+            background: linear-gradient(180deg, #1a1a2e, #0f0f1a);
+            border-radius: 15px; position: relative; z-index: 2;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        .suit-render .heat-line {
+            position: absolute; border-radius: 3px;
+            background: linear-gradient(90deg, var(--warning-orange), var(--danger-red));
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
+            animation: heatPulse 2s ease-in-out infinite;
+        }
+        @keyframes heatPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .heat-line.chest { width: 60px; height: 4px; top: 50px; left: 50%; transform: translateX(-50%); }
+        .heat-line.back { width: 50px; height: 4px; top: 45px; left: 50%; transform: translateX(-50%); }
+        .heat-line.arm-l { width: 3px; height: 80px; top: 70px; left: 30px; }
+        .heat-line.arm-r { width: 3px; height: 80px; top: 70px; right: 30px; }
+        .heat-line.leg-l { width: 4px; height: 100px; top: 200px; left: 60px; }
+        .heat-line.leg-r { width: 4px; height: 100px; top: 200px; right: 60px; }
+        .suit-render .label-tag {
+            position: absolute; background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 4px;
+            padding: 2px 8px; font-size: 0.65rem; font-family: 'Orbitron', sans-serif;
+            color: var(--frost-cyan);
+        }
+
+        .product-details h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            margin-bottom: 20px; color: var(--frost-cyan);
+        }
+        .product-details .price {
+            font-family: 'Orbitron', sans-serif; font-size: 2.5rem;
+            color: var(--aurora-green); margin-bottom: 20px;
+        }
+        .product-details .price .old {
+            font-size: 1.2rem; color: rgba(232, 244, 248, 0.4);
+            text-decoration: line-through; margin-left: 15px;
+        }
+        .product-details p { line-height: 1.8; color: rgba(232, 244, 248, 0.8); margin-bottom: 20px; }
+        .spec-list { list-style: none; margin: 25px 0; }
+        .spec-list li {
+            padding: 10px 0; border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            display: flex; justify-content: space-between;
+        }
+        .spec-list li span:first-child { color: rgba(232, 244, 248, 0.6); }
+        .spec-list li span:last-child { font-weight: 600; color: var(--arctic-white); }
+
+        .btn {
+            padding: 16px 40px; border-radius: 8px; font-size: 1rem;
+            font-weight: 600; text-decoration: none; cursor: pointer;
+            transition: all 0.3s; border: none; display: inline-block;
+            font-family: 'Exo 2', sans-serif; letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--frost-cyan), #0099cc);
+            color: var(--deep-blue); box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Zones section */
+        .zones-section { margin-bottom: 80px; }
+        .zones-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            text-align: center; margin-bottom: 50px;
+        }
+        .zones-section h2 span { color: var(--frost-cyan); }
+        .zones-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;
+        }
+        .zone-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 30px; text-align: center;
+            transition: all 0.3s;
+        }
+        .zone-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.1);
+        }
+        .zone-card .zone-num {
+            font-family: 'Orbitron', sans-serif; font-size: 2.5rem;
+            color: var(--frost-cyan); opacity: 0.3; margin-bottom: 10px;
+        }
+        .zone-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin-bottom: 10px; }
+        .zone-card p { color: rgba(232, 244, 248, 0.6); font-size: 0.9rem; line-height: 1.6; }
+        .zone-card .temp-range {
+            margin-top: 15px; padding-top: 15px;
+            border-top: 1px solid rgba(0, 212, 255, 0.1);
+            font-family: 'Orbitron', sans-serif; color: var(--warning-orange);
+            font-size: 0.9rem;
+        }
+
+        /* Comparison table */
+        .comparison-section { margin-bottom: 80px; }
+        .comparison-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            text-align: center; margin-bottom: 50px;
+        }
+        .comparison-section h2 span { color: var(--frost-cyan); }
+        .comp-table {
+            width: 100%; border-collapse: collapse;
+            background: var(--glass); border-radius: 16px;
+            overflow: hidden; border: 1px solid var(--glass-border);
+        }
+        .comp-table th {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 18px; text-align: left;
+            font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+            color: var(--frost-cyan); border-bottom: 1px solid var(--glass-border);
+        }
+        .comp-table td {
+            padding: 16px 18px; border-bottom: 1px solid rgba(0, 212, 255, 0.05);
+            color: rgba(232, 244, 248, 0.8);
+        }
+        .comp-table tr:hover td { background: rgba(0, 212, 255, 0.03); }
+        .comp-table .highlight {
+            background: linear-gradient(90deg, rgba(0, 255, 170, 0.1), rgba(0, 212, 255, 0.1));
+        }
+        .comp-table .highlight td { color: var(--arctic-white); font-weight: 600; }
+        .rating { display: flex; gap: 3px; }
+        .rating .star { color: var(--warning-orange); }
+        .rating .star.empty { color: rgba(232, 244, 248, 0.2); }
+
+        /* CTA */
+        .cta-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 255, 170, 0.05));
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 60px; text-align: center;
+        }
+        .cta-box h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2rem; margin-bottom: 15px;
+        }
+        .cta-box p { color: rgba(232, 244, 248, 0.6); margin-bottom: 30px; }
+
+        footer {
+            background: #070f1a; padding: 40px;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        footer p { color: rgba(232, 244, 248, 0.5); font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .product-showcase { grid-template-columns: 1fr; }
+            .zones-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">TECHNO<span>ATLANT</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="product.html" class="active">Продукт</a></li>
+                <li><a href="simulator.html">Симулятор</a></li>
+                <li><a href="about.html">О проекте</a></li>
+                <li><a href="contacts.html">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>TECHNO<span style="color:var(--frost-cyan)">ATLANT</span> PRO</h1>
+        <p>Сверхтехнологичный обогревающий костюм нового поколения</p>
+    </div>
+
+    <div class="content">
+        <div class="product-showcase">
+            <div class="product-image">
+                <div class="suit-render">
+                    <div class="heat-line chest"></div>
+                    <div class="heat-line back"></div>
+                    <div class="heat-line arm-l"></div>
+                    <div class="heat-line arm-r"></div>
+                    <div class="heat-line leg-l"></div>
+                    <div class="heat-line leg-r"></div>
+                    <div class="label-tag" style="top:42px;left:50%;transform:translateX(-50%)">ГРУДЬ</div>
+                    <div class="label-tag" style="top:60px;left:50%;transform:translateX(-50%)">СПИНА</div>
+                    <div class="label-tag" style="top:90px;left:5px">Л.РУКА</div>
+                    <div class="label-tag" style="top:90px;right:5px">П.РУКА</div>
+                    <div class="label-tag" style="top:220px;left:15px">Л.НОГА</div>
+                    <div class="label-tag" style="top:220px;right:15px">П.НОГА</div>
+                </div>
+            </div>
+            <div class="product-details">
+                <h2>TechnoAtlant PRO</h2>
+                <div class="price">32 000 ₽ <span class="old">45 000 ₽</span></div>
+                <p>Обогревающий костюм с интеллектуальной системой управления на базе микроконтроллера. 6 зон обогрева, 3 режима работы, многоуровневая защита от перегрева и короткого замыкания.</p>
+                <ul class="spec-list">
+                    <li><span>Зоны обогрева</span><span>6 (грудь, спина, руки, ноги)</span></li>
+                    <li><span>Режимы работы</span><span>Эконом / Стандарт / Максимум</span></li>
+                    <li><span>Рабочая температура</span><span>до −40°C</span></li>
+                    <li><span>Автономность</span><span>до 8 часов</span></li>
+                    <li><span>Материал</span><span>Мембранная ткань, водонепроницаемая</span></li>
+                    <li><span>Нагревательные элементы</span><span>Карбоновые нити</span></li>
+                    <li><span>Безопасность</span><span>ТР ТС 004/2011, ТР ТС 020/2011</span></li>
+                    <li><span>Вес</span><span>1.2 кг (без аккумулятора)</span></li>
+                </ul>
+                <a href="simulator.html" class="btn btn-primary">Протестировать в симуляторе</a>
+            </div>
+        </div>
+
+        <div class="zones-section">
+            <h2>6 <span>ЗОН</span> ОБОГРЕВА</h2>
+            <div class="zones-grid">
+                <div class="zone-card">
+                    <div class="zone-num">01</div>
+                    <h3>ГРУДЬ</h3>
+                    <p>Основная зона обогрева, обеспечивает поддержание температуры в области сердца и лёгких. Критично для кровообращения.</p>
+                    <div class="temp-range">+25°C ... +40°C</div>
+                </div>
+                <div class="zone-card">
+                    <div class="zone-num">02</div>
+                    <h3>СПИНА</h3>
+                    <p>Верхняя спина — зона с высокой плотностью кровеносных сосудов. Обогрев спины снижает риск переохлаждения.</p>
+                    <div class="temp-range">+25°C ... +40°C</div>
+                </div>
+                <div class="zone-card">
+                    <div class="zone-num">03</div>
+                    <h3>ЛЕВАЯ РУКА</h3>
+                    <p>Конечности первыми страдают от холода. Нагревательный элемент на предплечье и плече.</p>
+                    <div class="temp-range">+20°C ... +35°C</div>
+                </div>
+                <div class="zone-card">
+                    <div class="zone-num">04</div>
+                    <h3>ПРАВАЯ РУКА</h3>
+                    <p>Симметричный обогрев правой руки. Возможность индивидуального отключения для экономии энергии.</p>
+                    <div class="temp-range">+20°C ... +35°C</div>
+                </div>
+                <div class="zone-card">
+                    <div class="zone-num">05</div>
+                    <h3>ЛЕВАЯ НОГА</h3>
+                    <p>Бедро и голень — зоны с наибольшим риском обморожения. Мощный нагрев для сохранения мобильности.</p>
+                    <div class="temp-range">+22°C ... +38°C</div>
+                </div>
+                <div class="zone-card">
+                    <div class="zone-num">06</div>
+                    <h3>ПРАВАЯ НОГА</h3>
+                    <p>Симметричный обогрев правой ноги. Независимое управление каждой зоной через микроконтроллер.</p>
+                    <div class="temp-range">+22°C ... +38°C</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2>СРАВНЕНИЕ С <span>КОНКУРЕНТАМИ</span></h2>
+            <table class="comp-table">
+                <tr>
+                    <th>Параметр</th>
+                    <th>I Teramo</th>
+                    <th>II Werewolf</th>
+                    <th>III Remington</th>
+                    <th>TechnoAtlant</th>
+                </tr>
+                <tr>
+                    <td>Цена</td>
+                    <td>11 500 ₽</td>
+                    <td>20 000 ₽</td>
+                    <td>46 500 ₽</td>
+                    <td class="highlight">32 000 ₽</td>
+                </tr>
+                <tr>
+                    <td>Зоны обогрева</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td class="highlight">6</td>
+                </tr>
+                <tr>
+                    <td>Режимы работы</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td class="highlight">3 + защита</td>
+                </tr>
+                <tr>
+                    <td>Защита от перегрева</td>
+                    <td>Нет</td>
+                    <td>Нет</td>
+                    <td>Частичная</td>
+                    <td class="highlight">Многоуровневая</td>
+                </tr>
+                <tr>
+                    <td>Индивидуальное управление зонами</td>
+                    <td>Нет</td>
+                    <td>Нет</td>
+                    <td>Нет</td>
+                    <td class="highlight">Да</td>
+                </tr>
+                <tr>
+                    <td>Рейтинг</td>
+                    <td><div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span></div></td>
+                    <td><div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span></div></td>
+                    <td><div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span></div></td>
+                    <td class="highlight"><div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="cta-box">
+            <h2>Протестируйте перед покупкой</h2>
+            <p>Интерактивный симулятор позволяет оценить все режимы работы, защитные системы и логику управления нагревательными элементами.</p>
+            <a href="simulator.html" class="btn btn-primary" style="font-size:1.1rem;padding:18px 50px;">Запустить симулятор</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 TechnoAtlant. Проект команды: Поляков Павел, Михаил Букатников, Алексей Саржинский</p>
+    </footer>
+</body>
+</html>

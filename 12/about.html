@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoAtlant — О проекте</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --ice-blue: #a8d8ea;
+            --deep-blue: #0a1628;
+            --arctic-white: #e8f4f8;
+            --frost-cyan: #00d4ff;
+            --aurora-green: #00ffaa;
+            --warning-orange: #ff6b35;
+            --danger-red: #ff2d55;
+            --glass: rgba(10, 22, 40, 0.9);
+            --glass-border: rgba(0, 212, 255, 0.15);
+        }
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--deep-blue);
+            color: var(--arctic-white);
+            overflow-x: hidden;
+        }
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000; padding: 0 40px;
+        }
+        .nav-container {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px;
+        }
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem; font-weight: 900;
+            color: var(--frost-cyan);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            letter-spacing: 3px;
+        }
+        .logo span { color: var(--arctic-white); }
+        .nav-links {
+            display: flex; gap: 30px; list-style: none;
+        }
+        .nav-links a {
+            color: var(--arctic-white); text-decoration: none;
+            font-weight: 500; font-size: 0.95rem;
+            transition: all 0.3s; position: relative;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 2px; background: var(--frost-cyan);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover { color: var(--frost-cyan); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--frost-cyan); }
+        .nav-links a.active::after { width: 100%; }
+
+        .page-header {
+            padding: 130px 40px 60px; text-align: center;
+            background: linear-gradient(180deg, #0d1f33, var(--deep-blue));
+        }
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .page-header p { color: rgba(232, 244, 248, 0.6); font-size: 1.1rem; }
+
+        .content { max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+
+        /* Mission */
+        .mission-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 255, 170, 0.03));
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 50px; text-align: center; margin-bottom: 60px;
+        }
+        .mission-box h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.6rem;
+            margin-bottom: 20px; color: var(--frost-cyan);
+        }
+        .mission-box p { font-size: 1.1rem; line-height: 1.8; color: rgba(232, 244, 248, 0.8); max-width: 800px; margin: 0 auto; }
+        .mission-quote {
+            font-family: 'Orbitron', sans-serif; font-size: 1.3rem;
+            color: var(--aurora-green); margin-top: 25px;
+            letter-spacing: 2px;
+        }
+
+        /* Team */
+        .team-section { margin-bottom: 60px; }
+        .team-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            text-align: center; margin-bottom: 50px;
+        }
+        .team-section h2 span { color: var(--frost-cyan); }
+        .team-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+        }
+        .team-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 35px; text-align: center;
+            transition: all 0.3s;
+        }
+        .team-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.1);
+        }
+        .team-avatar {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 170, 0.2));
+            margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+        .team-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin-bottom: 8px; }
+        .team-card .role {
+            color: var(--frost-cyan); font-size: 0.85rem; font-weight: 600;
+            margin-bottom: 15px; letter-spacing: 1px;
+        }
+        .team-card .skills {
+            color: rgba(232, 244, 248, 0.6); font-size: 0.85rem; line-height: 1.6;
+        }
+
+        /* Timeline */
+        .timeline-section { margin-bottom: 60px; }
+        .timeline-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            text-align: center; margin-bottom: 50px;
+        }
+        .timeline-section h2 span { color: var(--frost-cyan); }
+        .timeline {
+            position: relative; padding-left: 40px;
+        }
+        .timeline::before {
+            content: ''; position: absolute; left: 12px; top: 0; bottom: 0;
+            width: 2px; background: linear-gradient(180deg, var(--frost-cyan), var(--aurora-green));
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 40px; padding-left: 30px;
+        }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -34px; top: 5px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--frost-cyan); border: 3px solid var(--deep-blue);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+        .timeline-item h3 {
+            font-family: 'Orbitron', sans-serif; font-size: 1rem;
+            color: var(--frost-cyan); margin-bottom: 8px;
+        }
+        .timeline-item p { color: rgba(232, 244, 248, 0.7); line-height: 1.7; }
+        .timeline-item .date {
+            font-size: 0.8rem; color: var(--aurora-green);
+            margin-bottom: 5px; font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Stats */
+        .stats-section { margin-bottom: 60px; }
+        .stats-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            text-align: center; margin-bottom: 50px;
+        }
+        .stats-section h2 span { color: var(--frost-cyan); }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px;
+        }
+        .stat-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 30px; text-align: center;
+        }
+        .stat-card .number {
+            font-family: 'Orbitron', sans-serif; font-size: 2.2rem;
+            color: var(--frost-cyan); margin-bottom: 8px;
+        }
+        .stat-card .label { color: rgba(232, 244, 248, 0.6); font-size: 0.9rem; }
+
+        /* SWOT */
+        .swot-section { margin-bottom: 60px; }
+        .swot-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            text-align: center; margin-bottom: 50px;
+        }
+        .swot-section h2 span { color: var(--frost-cyan); }
+        .swot-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px;
+        }
+        .swot-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 30px;
+        }
+        .swot-card h3 {
+            font-family: 'Orbitron', sans-serif; font-size: 1rem;
+            margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+        }
+        .swot-card.s h3 { color: var(--aurora-green); }
+        .swot-card.w h3 { color: var(--warning-orange); }
+        .swot-card.o h3 { color: var(--frost-cyan); }
+        .swot-card.t h3 { color: var(--danger-red); }
+        .swot-card ul { list-style: none; }
+        .swot-card ul li {
+            padding: 8px 0; padding-left: 20px; position: relative;
+            color: rgba(232, 244, 248, 0.7); font-size: 0.9rem; line-height: 1.6;
+        }
+        .swot-card ul li::before {
+            content: '›'; position: absolute; left: 0;
+            color: var(--frost-cyan); font-weight: bold;
+        }
+
+        footer {
+            background: #070f1a; padding: 40px;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        footer p { color: rgba(232, 244, 248, 0.5); font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .team-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .swot-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">TECHNO<span>ATLANT</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="product.html">Продукт</a></li>
+                <li><a href="simulator.html">Симулятор</a></li>
+                <li><a href="about.html" class="active">О проекте</a></li>
+                <li><a href="contacts.html">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>О <span style="color:var(--frost-cyan)">ПРОЕКТЕ</span></h1>
+        <p>История, команда и аналитика проекта TechnoAtlant</p>
+    </div>
+
+    <div class="content">
+        <div class="mission-box">
+            <h2>НАША МИССИЯ</h2>
+            <p>TechnoAtlant — это проект по созданию сверхтехнологичного обогревающего костюма для работы в особо холодных условиях. Мы стремимся обеспечить максимальную безопасность и комфорт людей, работающих в экстремальных климатических зонах России: Мурманске, Якутске, Норильске и за их пределами.</p>
+            <div class="mission-quote">COLD, DRY, AND WINDY</div>
+        </div>
+
+        <div class="team-section">
+            <h2>НАША <span>КОМАНДА</span></h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">👤</div>
+                    <h3>Поляков Павел</h3>
+                    <div class="role">ТИМЛИД</div>
+                    <div class="skills">Создание интеллект-карты, структурное и системное мышление, анализ информации, креативное мышление, фокусировка</div>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar">👤</div>
+                    <h3>Михаил Букатников</h3>
+                    <div class="role">ДИЗАЙНЕР</div>
+                    <div class="skills">Создание презентации, усидчивость, креативность, стрессоустойчивость</div>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar">👤</div>
+                    <h3>Алексей Саржинский</h3>
+                    <div class="role">ТЕСТИРОВЩИК</div>
+                    <div class="skills">Презентация продукта, стрессоустойчивость, уверенность, коммуникативные навыки, удержание внимания</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-section">
+            <h2>ЭТАПЫ <span>РАЗВИТИЯ</span></h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="date">ДЕНЬ 1</div>
+                    <h3>Формирование команды и концепции</h3>
+                    <p>Распределение ролей по soft skills, определение целевой аудитории (3 сегмента: 16-25, 25-45, 45+), анализ рынка через PAM/TAM/SAM/SOM.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">ДЕНЬ 2</div>
+                    <h3>Аналитика и проектирование</h3>
+                    <p>PEST-анализ, SWOT-анализ, анализ конкурентов (Teramo, Werewolf, Remington), разработка бюджета и оценка окупаемости (10 месяцев).</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">ДЕНЬ 3</div>
+                    <h3>Интерактивный веб-макет</h3>
+                    <p>Создание многостраничного сайта с симулятором работы нагревательных элементов. Демонстрация логики: режимы, защита, индикация, сценарии.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">БУДУЩЕЕ</div>
+                    <h3>Запуск производства</h3>
+                    <p>Цель: продать не менее 400 костюмов в первый год. Расширение ассортимента: перчатки, жилеты, куртки. Выход на международный рынок.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2>КЛЮЧЕВЫЕ <span>ПОКАЗАТЕЛИ</span></h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number">2.45M</div>
+                    <div class="label">Общий бюджет (₽)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">10</div>
+                    <div class="label">Месяцев до окупаемости</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">400+</div>
+                    <div class="label">Цель продаж (1 год)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">827K</div>
+                    <div class="label">Потенциальная аудитория</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="swot-section">
+            <h2>SWOT <span>АНАЛИЗ</span></h2>
+            <div class="swot-grid">
+                <div class="swot-card s">
+                    <h3>💪 СИЛЬНЫЕ СТОРОНЫ</h3>
+                    <ul>
+                        <li>Инновационный продукт с полным обогревом тела</li>
+                        <li>Высокий комфорт в холоде</li>
+                        <li>Использование современных материалов</li>
+                        <li>Многоуровневая система безопасности</li>
+                        <li>Индивидуальное управление зонами</li>
+                    </ul>
+                </div>
+                <div class="swot-card w">
+                    <h3>⚠️ СЛАБЫЕ СТОРОНЫ</h3>
+                    <ul>
+                        <li>Высокая стоимость костюма (32 000 ₽)</li>
+                        <li>Сложность производства</li>
+                        <li>Зависимость от поставщиков компонентов</li>
+                        <li>Необходимость сертификации</li>
+                    </ul>
+                </div>
+                <div class="swot-card o">
+                    <h3>🚀 ВОЗМОЖНОСТИ</h3>
+                    <ul>
+                        <li>Спрос в холодных регионах России</li>
+                        <li>Возможность расширения на другие страны</li>
+                        <li>Сотрудничество с компаниями и организациями</li>
+                        <li>Гранты на импортозамещение</li>
+                        <li>Расширение ассортимента</li>
+                    </ul>
+                </div>
+                <div class="swot-card t">
+                    <h3>⛔ УГРОЗЫ</h3>
+                    <ul>
+                        <li>Появление конкурентов</li>
+                        <li>Снижение покупательской способности</li>
+                        <li>Изменения на рынке</li>
+                        <li>Регуляторные барьеры</li>
+                        <li>Психологический барьер: страх удара током</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 TechnoAtlant. Проект команды: Поляков Павел, Михаил Букатников, Алексей Саржинский</p>
+    </footer>
+</body>
+</html>

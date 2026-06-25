@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoAtlant — Сверхтехнологичный обогревающий костюм</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --ice-blue: #a8d8ea;
+            --deep-blue: #0a1628;
+            --arctic-white: #e8f4f8;
+            --frost-cyan: #00d4ff;
+            --aurora-green: #00ffaa;
+            --warning-orange: #ff6b35;
+            --danger-red: #ff2d55;
+            --glass: rgba(10, 22, 40, 0.85);
+            --glass-border: rgba(0, 212, 255, 0.15);
+        }
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--deep-blue);
+            color: var(--arctic-white);
+            overflow-x: hidden;
+        }
+        /* Snow particles */
+        .snow-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .snowflake {
+            position: absolute; top: -10px;
+            background: white; border-radius: 50%;
+            opacity: 0.8; animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000; padding: 0 40px;
+        }
+        .nav-container {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px;
+        }
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem; font-weight: 900;
+            color: var(--frost-cyan);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            letter-spacing: 3px;
+        }
+        .logo span { color: var(--arctic-white); }
+        .nav-links {
+            display: flex; gap: 30px; list-style: none;
+        }
+        .nav-links a {
+            color: var(--arctic-white); text-decoration: none;
+            font-weight: 500; font-size: 0.95rem;
+            transition: all 0.3s; position: relative;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 2px; background: var(--frost-cyan);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover { color: var(--frost-cyan); }
+        .nav-links a:hover::after { width: 100%; }
+        /* Hero */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            justify-content: center; position: relative;
+            background: linear-gradient(135deg, #0a1628 0%, #0d2137 50%, #0a1628 100%);
+            padding: 120px 40px 80px;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 60%);
+        }
+        .hero-content {
+            max-width: 1200px; width: 100%;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+            align-items: center; position: relative; z-index: 2;
+        }
+        .hero-text h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem; font-weight: 900;
+            line-height: 1.1; margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--arctic-white), var(--frost-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: none;
+        }
+        .hero-text .tagline {
+            font-size: 1.3rem; color: var(--ice-blue);
+            margin-bottom: 30px; font-weight: 300;
+            letter-spacing: 2px;
+        }
+        .hero-text p {
+            font-size: 1.1rem; line-height: 1.8; color: rgba(232, 244, 248, 0.8);
+            margin-bottom: 40px;
+        }
+        .btn-group { display: flex; gap: 20px; flex-wrap: wrap; }
+        .btn {
+            padding: 16px 40px; border-radius: 8px; font-size: 1rem;
+            font-weight: 600; text-decoration: none; cursor: pointer;
+            transition: all 0.3s; border: none; display: inline-block;
+            font-family: 'Exo 2', sans-serif; letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--frost-cyan), #0099cc);
+            color: var(--deep-blue); box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.5);
+        }
+        .btn-outline {
+            background: transparent; color: var(--frost-cyan);
+            border: 2px solid var(--frost-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+        .btn-outline:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        .hero-visual {
+            position: relative; display: flex; justify-content: center;
+        }
+        .suit-silhouette {
+            width: 320px; height: 500px;
+            background: linear-gradient(180deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 0 60px rgba(0, 212, 255, 0.2), inset 0 0 60px rgba(0, 212, 255, 0.05);
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .heat-zone {
+            position: absolute; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.6) 0%, transparent 70%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .heat-zone.chest { width: 80px; height: 80px; top: 60px; left: 50%; transform: translateX(-50%); }
+        .heat-zone.back { width: 70px; height: 70px; top: 55px; left: 50%; transform: translateX(-50%); }
+        .heat-zone.arm-l { width: 40px; height: 100px; top: 100px; left: 30px; border-radius: 20px; }
+        .heat-zone.arm-r { width: 40px; height: 100px; top: 100px; right: 30px; border-radius: 20px; }
+        .heat-zone.leg-l { width: 50px; height: 120px; top: 280px; left: 70px; border-radius: 25px; }
+        .heat-zone.leg-r { width: 50px; height: 120px; top: 280px; right: 70px; border-radius: 25px; }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        .temp-display {
+            position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%);
+            background: var(--glass); border: 1px solid var(--glass-border);
+            padding: 12px 24px; border-radius: 30px;
+            font-family: 'Orbitron', sans-serif; font-size: 1.2rem;
+            color: var(--frost-cyan); white-space: nowrap;
+            backdrop-filter: blur(10px);
+        }
+        /* Stats bar */
+        .stats-bar {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.05), rgba(0, 255, 170, 0.05));
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 40px;
+            position: relative; z-index: 2;
+        }
+        .stats-container {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+        }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-family: 'Orbitron', sans-serif; font-size: 2.5rem;
+            color: var(--frost-cyan); font-weight: 700;
+        }
+        .stat-label { font-size: 0.95rem; color: rgba(232, 244, 248, 0.7); margin-top: 8px; }
+        /* Features */
+        .features {
+            padding: 100px 40px; position: relative; z-index: 2;
+            background: linear-gradient(180deg, var(--deep-blue), #0d1f33);
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif; font-size: 2.2rem;
+            text-align: center; margin-bottom: 60px;
+            color: var(--arctic-white);
+        }
+        .section-title span { color: var(--frost-cyan); }
+        .features-grid {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+        }
+        .feature-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 40px 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--frost-cyan), var(--aurora-green));
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.15);
+        }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon {
+            width: 60px; height: 60px; border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 170, 0.2));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; margin-bottom: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        .feature-card h3 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.2rem;
+            margin-bottom: 12px; color: var(--arctic-white);
+        }
+        .feature-card p { color: rgba(232, 244, 248, 0.7); line-height: 1.7; }
+        /* CTA */
+        .cta-section {
+            padding: 100px 40px; text-align: center;
+            background: linear-gradient(135deg, #0d1f33, #0a1628);
+            position: relative; z-index: 2;
+        }
+        .cta-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .cta-section p {
+            font-size: 1.2rem; color: rgba(232, 244, 248, 0.7);
+            max-width: 600px; margin: 0 auto 40px;
+        }
+        /* Footer */
+        footer {
+            background: #070f1a; padding: 40px;
+            border-top: 1px solid var(--glass-border);
+            text-align: center; position: relative; z-index: 2;
+        }
+        footer p { color: rgba(232, 244, 248, 0.5); font-size: 0.9rem; }
+        /* Responsive */
+        @media (max-width: 900px) {
+            .hero-content { grid-template-columns: 1fr; text-align: center; }
+            .hero-text h1 { font-size: 2.5rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .stats-container { grid-template-columns: repeat(2, 1fr); }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="snow-container" id="snow"></div>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo">TECHNO<span>ATLANT</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="product.html">Продукт</a></li>
+                <li><a href="simulator.html">Симулятор</a></li>
+                <li><a href="about.html">О проекте</a></li>
+                <li><a href="contacts.html">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>COLD, DRY<br>AND WINDY</h1>
+                <p class="tagline">СВЕРХТЕХНОЛОГИЧНЫЙ ОБОГРЕВАЮЩИЙ КОСТЮМ</p>
+                <p>Равномерный нагрев для поддержания температуры тела в особо холодных условиях с максимальной безопасностью. Разработан для экстремальных климатических зон России.</p>
+                <div class="btn-group">
+                    <a href="simulator.html" class="btn btn-primary">Тестировать симулятор</a>
+                    <a href="product.html" class="btn btn-outline">Узнать больше</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="suit-silhouette">
+                    <div class="heat-zone chest"></div>
+                    <div class="heat-zone back"></div>
+                    <div class="heat-zone arm-l"></div>
+                    <div class="heat-zone arm-r"></div>
+                    <div class="heat-zone leg-l"></div>
+                    <div class="heat-zone leg-r"></div>
+                </div>
+                <div class="temp-display">−30°C → +25°C</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Зон обогрева</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">−40°C</div>
+                <div class="stat-label">Рабочая температура</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">8ч</div>
+                <div class="stat-label">Автономность</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">32 000₽</div>
+                <div class="stat-label">Стартовая цена</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2 class="section-title">Почему <span>TechnoAtlant</span></h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔥</div>
+                <h3>6 зон обогрева</h3>
+                <p>Грудь, спина, руки, бёдра и голени — полное покрытие тела для максимального комфорта в экстремальном холоде.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Умное управление</h3>
+                <p>Микроконтроллерная система с тремя режимами: экономичный, стандартный и интенсивный обогрев.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Безопасность</h3>
+                <p>Многоуровневая защита от перегрева, короткого замыкания и попадания влаги. Сертификация по ТР ТС.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔋</div>
+                <h3>Долгая автономность</h3>
+                <p>Li-ion аккумуляторы с режимом экономии энергии. До 8 часов непрерывной работы.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💧</div>
+                <h3>Водонепроницаемость</h3>
+                <p>Мембранная ткань защищает от влаги и ветра при сохранении паропроницаемости.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏔️</div>
+                <h3>Для суровых условий</h3>
+                <p>Разработан для Мурманска, Якутска, Норильска и других регионов с экстремальным климатом.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <h2>Протестируйте логику работы</h2>
+        <p>Интерактивный веб-макет демонстрирует все режимы работы нагревательных элементов, защитные системы и индикацию.</p>
+        <a href="simulator.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 18px 50px;">Запустить симулятор</a>
+    </section>
+
+    <footer>
+        <p>© 2026 TechnoAtlant. Проект команды: Поляков Павел, Михаил Букатников, Алексей Саржинский</p>
+    </footer>
+
+    <script>
+        // Snow animation
+        const snowContainer = document.getElementById('snow');
+        for (let i = 0; i < 50; i++) {
+            const flake = document.createElement('div');
+            flake.className = 'snowflake';
+            flake.style.left = Math.random() * 100 + '%';
+            flake.style.width = flake.style.height = Math.random() * 4 + 2 + 'px';
+            flake.style.animationDuration = Math.random() * 5 + 5 + 's';
+            flake.style.animationDelay = Math.random() * 5 + 's';
+            flake.style.opacity = Math.random() * 0.5 + 0.3;
+            snowContainer.appendChild(flake);
+        }
+    </script>
+</body>
+</html>

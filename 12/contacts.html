@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoAtlant — Контакты</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --ice-blue: #a8d8ea;
+            --deep-blue: #0a1628;
+            --arctic-white: #e8f4f8;
+            --frost-cyan: #00d4ff;
+            --aurora-green: #00ffaa;
+            --warning-orange: #ff6b35;
+            --danger-red: #ff2d55;
+            --glass: rgba(10, 22, 40, 0.9);
+            --glass-border: rgba(0, 212, 255, 0.15);
+        }
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--deep-blue);
+            color: var(--arctic-white);
+            overflow-x: hidden;
+        }
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000; padding: 0 40px;
+        }
+        .nav-container {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px;
+        }
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem; font-weight: 900;
+            color: var(--frost-cyan);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            letter-spacing: 3px;
+        }
+        .logo span { color: var(--arctic-white); }
+        .nav-links {
+            display: flex; gap: 30px; list-style: none;
+        }
+        .nav-links a {
+            color: var(--arctic-white); text-decoration: none;
+            font-weight: 500; font-size: 0.95rem;
+            transition: all 0.3s; position: relative;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 2px; background: var(--frost-cyan);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover { color: var(--frost-cyan); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--frost-cyan); }
+        .nav-links a.active::after { width: 100%; }
+
+        .page-header {
+            padding: 130px 40px 60px; text-align: center;
+            background: linear-gradient(180deg, #0d1f33, var(--deep-blue));
+        }
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .page-header p { color: rgba(232, 244, 248, 0.6); font-size: 1.1rem; }
+
+        .content { max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+
+        /* Contact grid */
+        .contact-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+            margin-bottom: 60px;
+        }
+        .contact-info {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 40px;
+        }
+        .contact-info h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.4rem;
+            margin-bottom: 30px; color: var(--frost-cyan);
+        }
+        .contact-item {
+            display: flex; align-items: flex-start; gap: 15px;
+            margin-bottom: 25px; padding-bottom: 25px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+        }
+        .contact-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .contact-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 255, 170, 0.1));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; flex-shrink: 0;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        .contact-item h3 { font-size: 1rem; margin-bottom: 5px; }
+        .contact-item p { color: rgba(232, 244, 248, 0.6); font-size: 0.9rem; }
+        .contact-item a { color: var(--frost-cyan); text-decoration: none; }
+        .contact-item a:hover { text-decoration: underline; }
+
+        /* Form */
+        .contact-form {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 40px;
+        }
+        .contact-form h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.4rem;
+            margin-bottom: 30px; color: var(--frost-cyan);
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; margin-bottom: 8px;
+            font-size: 0.9rem; color: rgba(232, 244, 248, 0.7);
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%; padding: 14px 16px;
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid var(--glass-border); border-radius: 10px;
+            color: var(--arctic-white); font-family: 'Exo 2', sans-serif;
+            font-size: 0.95rem; transition: all 0.3s;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none; border-color: var(--frost-cyan);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .btn {
+            padding: 16px 40px; border-radius: 8px; font-size: 1rem;
+            font-weight: 600; text-decoration: none; cursor: pointer;
+            transition: all 0.3s; border: none; display: inline-block;
+            font-family: 'Exo 2', sans-serif; letter-spacing: 1px;
+            width: 100%;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--frost-cyan), #0099cc);
+            color: var(--deep-blue); box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Regions */
+        .regions-section { margin-bottom: 60px; }
+        .regions-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            text-align: center; margin-bottom: 50px;
+        }
+        .regions-section h2 span { color: var(--frost-cyan); }
+        .regions-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;
+        }
+        .region-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 30px; text-align: center;
+            transition: all 0.3s;
+        }
+        .region-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+        .region-card .city {
+            font-family: 'Orbitron', sans-serif; font-size: 1.3rem;
+            color: var(--frost-cyan); margin-bottom: 10px;
+        }
+        .region-card .temp {
+            font-size: 2rem; font-weight: 700; color: var(--warning-orange);
+            margin-bottom: 10px;
+        }
+        .region-card .pop {
+            color: rgba(232, 244, 248, 0.6); font-size: 0.9rem;
+        }
+        .region-card .climate {
+            margin-top: 15px; padding-top: 15px;
+            border-top: 1px solid rgba(0, 212, 255, 0.1);
+            color: rgba(232, 244, 248, 0.7); font-size: 0.85rem;
+        }
+
+        /* Social */
+        .social-section { text-align: center; margin-bottom: 60px; }
+        .social-section h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        .social-links {
+            display: flex; justify-content: center; gap: 20px;
+        }
+        .social-link {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; transition: all 0.3s; cursor: pointer;
+            color: var(--arctic-white); text-decoration: none;
+        }
+        .social-link:hover {
+            transform: translateY(-5px) scale(1.1);
+            border-color: var(--frost-cyan);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            color: var(--frost-cyan);
+        }
+
+        footer {
+            background: #070f1a; padding: 40px;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        footer p { color: rgba(232, 244, 248, 0.5); font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .contact-grid { grid-template-columns: 1fr; }
+            .regions-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">TECHNO<span>ATLANT</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="product.html">Продукт</a></li>
+                <li><a href="simulator.html">Симулятор</a></li>
+                <li><a href="about.html">О проекте</a></li>
+                <li><a href="contacts.html" class="active">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>КОНТАКТЫ</h1>
+        <p>Свяжитесь с нами для заказа, партнёрства или консультации</p>
+    </div>
+
+    <div class="content">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h2>📞 СВЯЗАТЬСЯ С НАМИ</h2>
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <div>
+                        <h3>Телефон</h3>
+                        <p><a href="tel:+1234567890">+7 (123) 456-78-90</a></p>
+                        <p style="font-size:0.8rem;margin-top:3px">Пн–Пт, 9:00–18:00 (МСК)</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div>
+                        <h3>Email</h3>
+                        <p><a href="mailto:hello@technoatlant.ru">hello@technoatlant.ru</a></p>
+                        <p style="font-size:0.8rem;margin-top:3px">Ответ в течение 24 часов</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🌐</div>
+                    <div>
+                        <h3>Сайт</h3>
+                        <p><a href="index.html">www.technoatlant.ru</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <h3>Адрес</h3>
+                        <p>Россия, г. Мурманск</p>
+                        <p style="font-size:0.8rem;margin-top:3px">Центральный офис проекта</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <h2>✍️ НАПИШИТЕ НАМ</h2>
+                <form onsubmit="event.preventDefault(); alert('Спасибо! Ваше сообщение отправлено.');">
+                    <div class="form-group">
+                        <label>Ваше имя</label>
+                        <input type="text" placeholder="Иван Иванов" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="ivan@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Тема обращения</label>
+                        <select>
+                            <option>Заказ костюма</option>
+                            <option>Партнёрство</option>
+                            <option>Консультация</option>
+                            <option>Сервисное обслуживание</option>
+                            <option>Другое</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Сообщение</label>
+                        <textarea placeholder="Опишите ваш запрос..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Отправить сообщение</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="regions-section">
+            <h2>НАШИ <span>РЕГИОНЫ</span> ПРИСУТСТВИЯ</h2>
+            <div class="regions-grid">
+                <div class="region-card">
+                    <div class="city">МУРМАНСК</div>
+                    <div class="temp">−30°C</div>
+                    <div class="pop">Население: 265 000</div>
+                    <div class="climate">Суровый субарктический климат. Сегмент: 16-25 лет, доставка, активный образ жизни.</div>
+                </div>
+                <div class="region-card">
+                    <div class="city">ЯКУТСК</div>
+                    <div class="temp">−50°C</div>
+                    <div class="pop">Население: 385 000</div>
+                    <div class="climate">Резко континентальный климат. Сегмент: 25-45 лет, вахта, работа на сильном морозе.</div>
+                </div>
+                <div class="region-card">
+                    <div class="city">НОРИЛЬСК</div>
+                    <div class="temp">−40°C</div>
+                    <div class="pop">Население: 177 000</div>
+                    <div class="climate">Суровый субарктический климат. Сегмент: 45+, строительство, работа на улице.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="social-section">
+            <h2>МЫ В СОЦИАЛЬНЫХ СЕТЯХ</h2>
+            <div class="social-links">
+                <a href="#" class="social-link" title="VK">VK</a>
+                <a href="#" class="social-link" title="Telegram">TG</a>
+                <a href="#" class="social-link" title="YouTube">YT</a>
+                <a href="#" class="social-link" title="Instagram">IG</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 TechnoAtlant. Проект команды: Поляков Павел, Михаил Букатников, Алексей Саржинский</p>
+    </footer>
+</body>
+</html>
